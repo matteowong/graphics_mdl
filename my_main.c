@@ -107,13 +107,13 @@ void my_main() {
   struct matrix *edges=new_matrix(4,4);
   struct matrix *polygons=new_matrix(4,4);
 
-  int i=0;
-  for (;i<lastop;i++) {
+  for (i=0;i<lastop;i++) {
 
     switch (op[i].opcode)
       {
       case PUSH:
 	push(systems);
+	//print_stack(systems);
 	break;
       case POP:
 	pop(systems);
@@ -121,8 +121,13 @@ void my_main() {
 
       case MOVE:
 	tmp=make_translate(op[i].op.move.d[0],op[i].op.move.d[1],op[i].op.move.d[2]);
+	printf("[%d]: move\n",i);
+	//print_matrix(tmp);
 	matrix_mult(peek(systems), tmp);
+	printf("tmp\n");
+	print_matrix(tmp);
 	copy_matrix(tmp, peek(systems));
+	print_matrix(peek(systems));
 	break;
       case SCALE:
 	tmp=make_scale(op[i].op.scale.d[0],op[i].op.scale.d[1],op[i].op.scale.d[2]);
@@ -130,13 +135,12 @@ void my_main() {
 	copy_matrix(tmp, peek(systems));
 	break;
       case ROTATE:
-	//compare to 'x' and 'X'
-	if (op[i].op.rotate.axis=='x')
-	  temp=make_rotX(op[i].op.rotate.degrees);
-	else if (op[i].op.rotate.axis=='y')
-	  temp=make_rotY(op[i].op.rotate.degrees);
-	else if (op[i].op.rotate.axis=='z')
-	  temp=make_rotZ(op[i].op.rotate.degrees);
+	if (op[i].op.rotate.axis==0)
+	  tmp=make_rotX(op[i].op.rotate.degrees);
+	else if (op[i].op.rotate.axis==1)
+	  tmp=make_rotY(op[i].op.rotate.degrees);
+	else if (op[i].op.rotate.axis==2)
+	  tmp=make_rotZ(op[i].op.rotate.degrees);
 	matrix_mult(peek(systems), tmp);
 	copy_matrix(tmp, peek(systems));
 	break;
@@ -153,9 +157,30 @@ void my_main() {
 	draw_polygons(polygons, t, zb, view, light, ambient, areflect, dreflect, sreflect);
 	polygons->lastcol=0;
 	break;
+      case TORUS:
+	add_torus(polygons, op[i].op.torus.d[0], op[i].op.torus.d[1], op[i].op.torus.d[2], op[i].op.torus.r0, op[i].op.torus.r1, step_3d);
+	matrix_mult(peek(systems), polygons);
+	draw_polygons(polygons, t, zb, view, light, ambient, areflect, dreflect, sreflect);
+	polygons->lastcol=0;
+	break;
+
+      case LINE:
+	add_edge(edges, op[i].op.line.p0[0],op[i].op.line.p0[1],op[i].op.line.p0[2],op[i].op.line.p1[0],op[i].op.line.p1[1],op[i].op.line.p1[2]);
+	matrix_mult(peek(systems), edges);
+	draw_lines(edges, t, zb, g);
+	edges->lastcol=0;
+	break;
+
+      case SAVE:
+	save_extension(t, op[i].op.save.p->name);
+	break;
+      case DISPLAY:
+	display(t);
+	break;
 	
       }
 
   }
-
+  free_matrix(edges);
+  free_matrix(polygons);
 }
