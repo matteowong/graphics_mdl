@@ -136,11 +136,11 @@ void my_main() {
 	break;
       case ROTATE:
 	if (op[i].op.rotate.axis==0)
-	  tmp=make_rotX(op[i].op.rotate.degrees);
+	  tmp=make_rotX(op[i].op.rotate.degrees*(M_PI/180));
 	else if (op[i].op.rotate.axis==1)
-	  tmp=make_rotY(op[i].op.rotate.degrees);
+	  tmp=make_rotY(op[i].op.rotate.degrees*(M_PI/180));
 	else if (op[i].op.rotate.axis==2)
-	  tmp=make_rotZ(op[i].op.rotate.degrees);
+	  tmp=make_rotZ(op[i].op.rotate.degrees*(M_PI/180));
 	matrix_mult(peek(systems), tmp);
 	copy_matrix(tmp, peek(systems));
 	break;
