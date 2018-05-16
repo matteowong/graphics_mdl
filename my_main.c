@@ -121,13 +121,13 @@ void my_main() {
 
       case MOVE:
 	tmp=make_translate(op[i].op.move.d[0],op[i].op.move.d[1],op[i].op.move.d[2]);
-	printf("[%d]: move\n",i);
+	//printf("[%d]: move\n",i);
 	//print_matrix(tmp);
 	matrix_mult(peek(systems), tmp);
-	printf("tmp\n");
-	print_matrix(tmp);
+	//printf("tmp\n");
+	//print_matrix(tmp);
 	copy_matrix(tmp, peek(systems));
-	print_matrix(peek(systems));
+	//print_matrix(peek(systems));
 	break;
       case SCALE:
 	tmp=make_scale(op[i].op.scale.d[0],op[i].op.scale.d[1],op[i].op.scale.d[2]);
